@@ -38,8 +38,11 @@ def minimax(grid, current_cat, current_robot, goal, depth, alpha, beta, maximizi
 
 def enhanced_evaluate_state(grid, current_cat, current_robot, goal):
     # Base evaluation: difference in distance to the goal
-    cat_distance = len(maze.bfs(grid, current_cat, goal))
-    robot_distance = len(maze.bfs(grid, current_robot, goal))
+    cat_path = maze.bfs(grid, current_cat, goal)
+    robot_path = maze.bfs(grid, current_robot, goal)
+    
+    cat_distance = len(cat_path) if cat_path else float('inf')
+    robot_distance = len(robot_path) if robot_path else float('inf')
     
     if current_cat == goal:
         return float('-inf')

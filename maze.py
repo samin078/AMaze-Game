@@ -380,14 +380,27 @@ def main():
         current_time = pygame.time.get_ticks()
         elapsed_time = (current_time - start_time) / 1000  # Convert to seconds
         if level == 'easy':
-            optimal_time = len(bfs(grid,grid[0][0],goal))*0.6
-            timeout_threshold = optimal_time*10.0
+            path = bfs(grid, grid[0][0], goal)
+            if path is not None:
+                optimal_time = len(path)*0.6
+                timeout_threshold = optimal_time*10.0
+            else:
+                optimal_time = float('inf')  
         elif level == 'medium':
-            optimal_time = len(bfs(grid,grid[0][0],goal))*0.5
-            timeout_threshold = optimal_time*2.0
+            path = bfs(grid, grid[0][0], goal)
+            if path is not None:
+                optimal_time = len(path)*0.5
+                timeout_threshold = optimal_time*2.0
+            else:
+                optimal_time = float('inf') 
         elif level == 'hard':
-            optimal_time = len(bfs(grid,grid[0][0],goal))*0.48
-            timeout_threshold = optimal_time*0.8 + optimal_time
+            path = bfs(grid, grid[0][0], goal)
+            if path is not None:
+                optimal_time = len(path)*0.48
+                timeout_threshold = optimal_time*0.8 + optimal_time
+            else:
+                optimal_time = float('inf')
+                     
         else:
             raise ValueError("Invalid level")
 
@@ -611,13 +624,13 @@ def main():
 
         if current == goal and not generating:
             print("You won!")
-            winning_message(win)
             end_time = pygame.time.get_ticks()
             time_elapsed = (end_time - start_time) / 1000  # Convert to seconds
             print(f'Time Elapsed: {time_elapsed}')
             path = bfs(grid, grid[0][0], goal)
             block_count = len(path)  
             score,category = calculate_score_fuzzy(extra_blocks_accessed_count, block_count, time_elapsed, level)
+            winning_message(win, score, category)
             # score = calc_score.calculate_score(extra_blocks_accessed_count, len(shortest_path), time_elapsed, level)
             #score = round(score)
             print(f'Block_count: {block_count}')
@@ -627,13 +640,15 @@ def main():
             
 
     
-def winning_message(win):
+def winning_message(win, score, category):
     if sound_on:
         pygame.mixer.music.stop()  # Stop the background music
         win_sound.play()  # Play the winning sound
     font = pygame.font.Font(None, 72)
     text = font.render("You Won!!!", True, (0, 255, 0))
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2, maze_y + HEIGHT // 2 - text.get_height() // 2))
+    text = font.render(f"Score: {score} ({category})", True, (255, 255, 0))
+    win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2 + 50, maze_y + HEIGHT // 2 - text.get_height() // 2 + 50))
     pygame.display.update()
     pygame.time.wait(3000)  # Wait for 3 seconds
     if sound_on:
@@ -646,6 +661,8 @@ def timeout_message(win):
     win.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
     pygame.display.update()
     pygame.time.wait(3000)  # Display message for 3 seconds
+
+
 
 if __name__ == "__main__":
     main()
