@@ -77,17 +77,18 @@ def center_maze_and_buttons():
     maze_y = (screen_height - HEIGHT) // 2
 
     button_x = maze_x + WIDTH + 25  # 25 pixels gap from the maze
-    button_y = 150
+    button_y = 200
 
     global level_button_rect, regen_button_rect, show_button_rect, result_button_rect, toggle_footprints_button_rect, ga_button_rect, minimax_button_rect, astar_button_rect
-    level_button_rect = pygame.Rect(button_x, button_y + 50, 160, 40)
-    regen_button_rect = pygame.Rect(button_x, button_y + 100, 160, 40)
-    show_button_rect = pygame.Rect(button_x, button_y + 150, 160, 40)
-    result_button_rect = pygame.Rect(button_x, button_y + 200, 160, 40)
-    toggle_footprints_button_rect = pygame.Rect(button_x, button_y + 250, 160, 40)
-    ga_button_rect = pygame.Rect(button_x, button_y + 300, 160, 40)
-    minimax_button_rect = pygame.Rect(button_x, button_y + 350, 160, 40) 
-    astar_button_rect = pygame.Rect(button_x, button_y + 400, 160, 40)
+
+    level_button_rect = pygame.Rect(button_x, button_y + 70, 160, 40)
+    regen_button_rect = pygame.Rect(button_x, button_y + 120, 160, 40)
+    show_button_rect = pygame.Rect(button_x, button_y + 170, 160, 40)
+    result_button_rect = pygame.Rect(button_x, button_y + 220, 160, 40)
+    toggle_footprints_button_rect = pygame.Rect(button_x, button_y + 270, 160, 40)
+    ga_button_rect = pygame.Rect(button_x, button_y + 320, 160, 40)
+    minimax_button_rect = pygame.Rect(button_x, button_y + 370, 160, 40) 
+    astar_button_rect = pygame.Rect(button_x, button_y + 420, 160, 40)
      
     global sound_button_rect, quit_button_rect
     sound_button_rect = pygame.Rect(screen_width - 110, 10, 50, 50)
@@ -581,17 +582,17 @@ def main():
         draw_grid(win, grid, show_footprints)
         draw_buttons(win, difficulty_level)
         if minimax_running:
-            win.blit(treasure_img, (goal_mini.c * CELL_SIZE + PADDING, goal_mini.r * CELL_SIZE + PADDING))
-            win.blit(cat_img, (current_cat.c * CELL_SIZE + PADDING, current_cat.r * CELL_SIZE + PADDING))
-            win.blit(robot_img, (current_robot.c * CELL_SIZE + PADDING, current_robot.r * CELL_SIZE + PADDING))
+            win.blit(treasure_img, (maze_x + goal_mini.c * CELL_SIZE + PADDING, maze_y + goal_mini.r * CELL_SIZE + PADDING))
+            win.blit(cat_img, (maze_x + current_cat.c * CELL_SIZE + PADDING, maze_y + current_cat.r * CELL_SIZE + PADDING))
+            win.blit(robot_img, (maze_x + current_robot.c * CELL_SIZE + PADDING, maze_y + current_robot.r * CELL_SIZE + PADDING))
         else:
-            win.blit(cat_img, (current.c * CELL_SIZE + PADDING, current.r * CELL_SIZE + PADDING))
-            win.blit(fish_img, (goal.c * CELL_SIZE + PADDING, goal.r * CELL_SIZE + PADDING))
+            win.blit(cat_img, (maze_x + current.c * CELL_SIZE + PADDING, maze_y + current.r * CELL_SIZE + PADDING))
+            win.blit(fish_img, (maze_x + goal.c * CELL_SIZE + PADDING, maze_y + goal.r * CELL_SIZE + PADDING))
 
         # Draw remaining time
         font = pygame.font.Font(None, 26)
         elapsed_time_text = font.render(f"Time Count: {elapsed_time:.2f}s", True, WHITE)
-        win.blit(elapsed_time_text, (regen_button_rect.x, regen_button_rect.y - 40))
+        win.blit(elapsed_time_text, (level_button_rect.x, level_button_rect.y-40))
 
         pygame.display.flip()
 
