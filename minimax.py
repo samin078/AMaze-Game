@@ -49,6 +49,7 @@ def enhanced_evaluate_state(grid, current_cat, current_robot, goal):
     elif current_robot == goal:
         return float('inf')
     
+    
     # Additional evaluation criteria
     evaluation = robot_distance - cat_distance
     
@@ -81,14 +82,3 @@ def evaluate_state(grid, current_cat, current_robot, goal):
     elif current_robot == goal:
         return float('inf')
     return robot_distance - cat_distance
-
-# def get_best_move(grid, current_cat, current_robot, goal, depth, maximizing_player, previous_positions):
-#     best_move = None
-#     best_eval = float('-inf') if maximizing_player else float('inf')
-#     for neighbor in (current_robot.create_neighbors(grid) if maximizing_player else current_cat.create_neighbors(grid)):
-#         if valid_move(current_robot if maximizing_player else current_cat, neighbor, grid) and (neighbor.r, neighbor.c) not in previous_positions:
-#             eval = minimax(grid, current_cat if maximizing_player else neighbor, neighbor if maximizing_player else current_robot, goal, depth, float('-inf'), float('inf'), not maximizing_player, previous_positions.copy())
-#             if (maximizing_player and eval > best_eval) or (not maximizing_player and eval < best_eval):
-#                 best_eval = eval
-#                 best_move = neighbor
-#     return best_move

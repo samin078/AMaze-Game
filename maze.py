@@ -3,7 +3,7 @@ import random
 from collections import deque
 from random import randint
 import const
-from const import WHITE,BLACK,PURPLE,BLUE,OLIVE,FPS
+from const import WHITE,BLACK,PURPLE,BLUE,RED,FPS
 from ga import *
 from astar import initialize_astar, step_astar, rebuild_path
 from fuzzy_new import get_membership_blocks_accessed,get_membership_time_elapsed,rule_evaluation,defuzzify
@@ -123,7 +123,7 @@ class Cell:
             pygame.draw.rect(win, BLUE, (x + PADDING, y + PADDING, CELL_SIZE - PADDING*2, CELL_SIZE - PADDING*2))
 
         if self.evaluated_by_astar:
-            pygame.draw.rect(win, OLIVE, (x + PADDING, y + PADDING, CELL_SIZE - PADDING*2, CELL_SIZE - PADDING*2))
+            pygame.draw.rect(win, RED, (x + PADDING, y + PADDING, CELL_SIZE - PADDING*2, CELL_SIZE - PADDING*2))
 
         if self.walls[0]:
             pygame.draw.line(win, WHITE, (x, y), (x + CELL_SIZE, y), 2)
@@ -234,33 +234,49 @@ def draw_grid(win, grid, show_footprints):
             cell.draw(win, show_footprints)
 
 def draw_buttons(win, difficulty_level):
-    pygame.draw.rect(win, OLIVE, level_button_rect)
-    pygame.draw.rect(win, OLIVE, regen_button_rect)
-    pygame.draw.rect(win, OLIVE, show_button_rect)
-    pygame.draw.rect(win, OLIVE, result_button_rect)
-    pygame.draw.rect(win, OLIVE, toggle_footprints_button_rect)
-    pygame.draw.rect(win, OLIVE, ga_button_rect)
-    pygame.draw.rect(win, OLIVE, minimax_button_rect)
-    pygame.draw.rect(win, OLIVE, astar_button_rect)
-    font = pygame.font.Font(None, 36)
-    level_text = font.render(f'Level: {difficulty_level}', True, WHITE)
-    regen_text = font.render('Regenerate', True, WHITE)
+    pygame.draw.rect(win, RED, level_button_rect)
+    pygame.draw.rect(win, RED, regen_button_rect)
+    pygame.draw.rect(win, RED, show_button_rect)
+    pygame.draw.rect(win, RED, result_button_rect)
+    pygame.draw.rect(win, RED, toggle_footprints_button_rect)
+    pygame.draw.rect(win, RED, ga_button_rect)
+    pygame.draw.rect(win, RED, minimax_button_rect)
+    pygame.draw.rect(win, RED, astar_button_rect)
+    
+    font = pygame.font.Font('fonts/MotionControlNeueLite.otf', 36)
+    
+    level_text = font.render(f'Level {difficulty_level}', True, WHITE)
+    regen_text = font.render('Regen', True, WHITE)
     show_text = font.render('Show Gen', True, WHITE)
     result_text = font.render('Result', True, WHITE)
-    toggle_footprints_text = font.render('Footprints', True, WHITE)
-    ga_text = font.render('Run GA', True, WHITE)
-    minimax_text = font.render('Run MinMax', True, WHITE)
+    toggle_footprints_text = font.render('Trail', True, WHITE)
+    ga_text = font.render('GA', True, WHITE)
+    minimax_text = font.render('MiniMax', True, WHITE)
     astar_text = font.render('A Star', True, WHITE)
-    win.blit(level_text, (level_button_rect.x + 10, level_button_rect.y + 5))
-    win.blit(regen_text, (regen_button_rect.x + 10, regen_button_rect.y + 5))
-    win.blit(show_text, (show_button_rect.x + 10, show_button_rect.y + 5))
-    win.blit(result_text, (result_button_rect.x + 10, result_button_rect.y + 5))
-    win.blit(toggle_footprints_text, (toggle_footprints_button_rect.x + 10, toggle_footprints_button_rect.y + 5))
-    win.blit(ga_text, (ga_button_rect.x + 10, ga_button_rect.y + 5))
-    win.blit(minimax_text, (minimax_button_rect.x + 10, minimax_button_rect.y + 5))
-    win.blit(astar_text, (astar_button_rect.x + 10, astar_button_rect.y + 5))
+
+    # Center the text on each button
+    level_text_rect = level_text.get_rect(center=level_button_rect.center)
+    regen_text_rect = regen_text.get_rect(center=regen_button_rect.center)
+    show_text_rect = show_text.get_rect(center=show_button_rect.center)
+    result_text_rect = result_text.get_rect(center=result_button_rect.center)
+    toggle_footprints_text_rect = toggle_footprints_text.get_rect(center=toggle_footprints_button_rect.center)
+    ga_text_rect = ga_text.get_rect(center=ga_button_rect.center)
+    minimax_text_rect = minimax_text.get_rect(center=minimax_button_rect.center)
+    astar_text_rect = astar_text.get_rect(center=astar_button_rect.center)
+
+    # Draw the text
+    win.blit(level_text, level_text_rect)
+    win.blit(regen_text, regen_text_rect)
+    win.blit(show_text, show_text_rect)
+    win.blit(result_text, result_text_rect)
+    win.blit(toggle_footprints_text, toggle_footprints_text_rect)
+    win.blit(ga_text, ga_text_rect)
+    win.blit(minimax_text, minimax_text_rect)
+    win.blit(astar_text, astar_text_rect)
+
     win.blit(sound_on_img if pygame.mixer.music.get_busy() else sound_off_img, sound_button_rect.topleft)
     win.blit(quit_img, quit_button_rect.topleft)
+
 
 def bfs(grid, start, goal):
     queue = deque([(start, [])])
@@ -331,6 +347,9 @@ def grid_to_graph(grid):
 
 
 def main():
+    start_time = None
+    game_over = False  
+
     clock = pygame.time.Clock()
     difficulty_level = 1
     grid = [[Cell(r, c) for c in range(ncols)] for r in range(nrows)]
@@ -378,7 +397,8 @@ def main():
 
 
         current_time = pygame.time.get_ticks()
-        elapsed_time = (current_time - start_time) / 1000  # Convert to seconds
+        elapsed_time = (current_time - start_time) / 1000 if start_time else 0  
+
         if level == 'easy':
             path = bfs(grid, grid[0][0], goal)
             if path is not None:
@@ -411,6 +431,7 @@ def main():
                 if level_button_rect.collidepoint(event.pos):
                     difficulty_level = (difficulty_level%3) + 1  # Cycle between 1, 2, 3
                     print("diff", difficulty_level)
+                    start_time = pygame.time.get_ticks()
                     if difficulty_level == 1:
                         update_dimensions(400, 400, 200, 50)
                     elif difficulty_level == 2:
@@ -447,6 +468,7 @@ def main():
 
                     running = True
                 if regen_button_rect.collidepoint(event.pos):
+                    start_time = pygame.time.get_ticks()
                     grid = [[Cell(r, c) for c in range(ncols)] for r in range(nrows)]
                     generate_maze(grid) 
                     random_remove_walls(grid, grid[0][0], grid[nrows - 1][ncols - 1], nempty)
@@ -480,6 +502,7 @@ def main():
                     show_footprints = not show_footprints
                     minimax_running = False
                 elif ga_button_rect.collidepoint(event.pos):
+                    start_time = pygame.time.get_ticks()
                     ga_running = True
                     ga_start_time = pygame.time.get_ticks()
                     ga_best_fitness = 0
@@ -487,10 +510,12 @@ def main():
                     ga_best_path = []
                     minimax_running = False
                 elif minimax_button_rect.collidepoint(event.pos):
+                    start_time = pygame.time.get_ticks()
                     ga_running = False
                     minimax_running = True
                     visited_positions = set()
                 elif astar_button_rect.collidepoint(event.pos):  
+                    start_time = pygame.time.get_ticks()
                     ga_running = False
                     graph = grid_to_graph(grid)
                     start_node = (current.r, current.c)
@@ -603,8 +628,8 @@ def main():
             win.blit(fish_img, (maze_x + goal.c * CELL_SIZE + PADDING, maze_y + goal.r * CELL_SIZE + PADDING))
 
         # Draw remaining time
-        font = pygame.font.Font(None, 26)
-        elapsed_time_text = font.render(f"Time Count: {elapsed_time:.2f}s", True, WHITE)
+        font = pygame.font.Font("fonts\MotionControlNeueLite.otf", 36)
+        elapsed_time_text = font.render(f"Time : {elapsed_time:.2f}s", True, WHITE)
         win.blit(elapsed_time_text, (level_button_rect.x, level_button_rect.y-40))
 
         pygame.display.flip()
@@ -630,13 +655,12 @@ def main():
             path = bfs(grid, grid[0][0], goal)
             block_count = len(path)  
             score,category = calculate_score_fuzzy(extra_blocks_accessed_count, block_count, time_elapsed, level)
+            score = round(score)
             winning_message(win, score, category)
             # score = calc_score.calculate_score(extra_blocks_accessed_count, len(shortest_path), time_elapsed, level)
-            #score = round(score)
             print(f'Block_count: {block_count}')
             print(f'Agent_block_count: {agent_block_count}')
             print(f'Score: {score} ({category})')
-            running = False
             
 
     
@@ -644,10 +668,10 @@ def winning_message(win, score, category):
     if sound_on:
         pygame.mixer.music.stop()  # Stop the background music
         win_sound.play()  # Play the winning sound
-    font = pygame.font.Font(None, 72)
-    text = font.render("You Won!!!", True, (0, 255, 0))
+    font = pygame.font.Font("fonts\Valorax-lg25V.otf", 64)
+    text = font.render("GOAL REACHED!!!", True, (0, 255, 0))
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2, maze_y + HEIGHT // 2 - text.get_height() // 2))
-    text = font.render(f"Score: {score} ({category})", True, (255, 255, 0))
+    text = font.render(f"Score: {score}/75 ({category})", True, (255, 255, 0))
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2 + 50, maze_y + HEIGHT // 2 - text.get_height() // 2 + 50))
     pygame.display.update()
     pygame.time.wait(3000)  # Wait for 3 seconds
@@ -656,7 +680,7 @@ def winning_message(win, score, category):
         pygame.mixer.music.play(-1)  # Restart the background music
 
 def timeout_message(win):
-    font = pygame.font.Font(None, 72)
+    font = pygame.font.Font("fonts\Valorax-lg25V.otf", 64)
     text = font.render("Timeout!!!", True, (255, 0, 0))
     win.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - text.get_height() // 2))
     pygame.display.update()

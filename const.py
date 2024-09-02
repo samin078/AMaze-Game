@@ -22,8 +22,8 @@ def set_initial_val(width, height, max_moves, cell_size=30, padding=8):
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
-OLIVE = (128, 128, 0)
-RED = (255, 0, 0)
+OLIVE = (248, 152, 128)
+RED = ( 255, 87, 51 )
 PURPLE = (128, 0, 128)
 BLUE = (0, 0, 255)
 FPS = 30
