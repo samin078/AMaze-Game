@@ -674,7 +674,7 @@ def winning_message(win, score, category):
     text = font.render(f"Score: {score}/75 ({category})", True, (255, 255, 0))
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2 + 50, maze_y + HEIGHT // 2 - text.get_height() // 2 + 50))
     pygame.display.update()
-    pygame.time.wait(60000)  # Wait for 3 seconds
+    pygame.time.wait(3000)  # Wait for 3 seconds
     if sound_on:
         win_sound.stop()  # Stop the winning sound
         pygame.mixer.music.play(-1)  # Restart the background music
