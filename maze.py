@@ -637,7 +637,8 @@ def main():
             # if not show_button_rect:
                 print("Timeout!")
                 timeout_message(win)
-                start_time =None
+                start_time = 0
+                current_cat = grid[0][0]
         
         if current_cat == goal_mini:
             print("Cat wins!")
@@ -649,7 +650,6 @@ def main():
         if current == goal and not generating:
             print("You won!")
             end_time = pygame.time.get_ticks()
-            start_time = None
             time_elapsed = (end_time - start_time) / 1000  # Convert to seconds
             print(f'Time Elapsed: {time_elapsed}')
             path = bfs(grid, grid[0][0], goal)
@@ -661,6 +661,7 @@ def main():
             print(f'Block_count: {block_count}')
             print(f'Agent_block_count: {agent_block_count}')
             print(f'Score: {score} ({category})')
+            start_time = 0
             
 
     
