@@ -347,8 +347,7 @@ def grid_to_graph(grid):
 
 
 def main():
-    start_time = None
-    game_over = False  
+    start_time = None  
 
     clock = pygame.time.Clock()
     difficulty_level = 1
@@ -403,7 +402,7 @@ def main():
             path = bfs(grid, grid[0][0], goal)
             if path is not None:
                 optimal_time = len(path)*0.6
-                timeout_threshold = optimal_time*10.0
+                timeout_threshold = optimal_time*1.5
             else:
                 optimal_time = float('inf')  
         elif level == 'medium':
@@ -638,7 +637,7 @@ def main():
             # if not show_button_rect:
                 print("Timeout!")
                 timeout_message(win)
-                running = False
+                start_time =None
         
         if current_cat == goal_mini:
             print("Cat wins!")
@@ -650,6 +649,7 @@ def main():
         if current == goal and not generating:
             print("You won!")
             end_time = pygame.time.get_ticks()
+            start_time = None
             time_elapsed = (end_time - start_time) / 1000  # Convert to seconds
             print(f'Time Elapsed: {time_elapsed}')
             path = bfs(grid, grid[0][0], goal)
@@ -674,7 +674,7 @@ def winning_message(win, score, category):
     text = font.render(f"Score: {score}/75 ({category})", True, (255, 255, 0))
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2 + 50, maze_y + HEIGHT // 2 - text.get_height() // 2 + 50))
     pygame.display.update()
-    pygame.time.wait(3000)  # Wait for 3 seconds
+    pygame.time.wait(60000)  # Wait for 3 seconds
     if sound_on:
         win_sound.stop()  # Stop the winning sound
         pygame.mixer.music.play(-1)  # Restart the background music
