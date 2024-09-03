@@ -504,7 +504,6 @@ def main():
                 elif toggle_footprints_button_rect.collidepoint(event.pos):
                     show_footprints = not show_footprints
                     minimax_running = False
-                    start_time = None
                 elif ga_button_rect.collidepoint(event.pos):
                     start_time = pygame.time.get_ticks()
                     ga_running = True
