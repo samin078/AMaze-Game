@@ -11,6 +11,7 @@ from minimax import *
 
 pygame.init()
 
+
 # Constants
 WIDTH, HEIGHT = const.WIDTH, const.HEIGHT
 CELL_SIZE = const.CELL_SIZE
@@ -402,7 +403,7 @@ def main():
             path = bfs(grid, grid[0][0], goal)
             if path is not None:
                 optimal_time = len(path)*0.6
-                timeout_threshold = optimal_time*1.5
+                timeout_threshold = optimal_time*8.0
             else:
                 optimal_time = float('inf')  
         elif level == 'medium':
@@ -478,6 +479,7 @@ def main():
                     ga_running = False
                     astar_running = False
                     minimax_running = False
+                    start_time = None
                 elif show_button_rect.collidepoint(event.pos):
                     grid = [[Cell(r, c) for c in range(ncols)] for r in range(nrows)]
                     current = grid[0][0]
@@ -487,6 +489,7 @@ def main():
                     ga_running = False
                     astar_running = False
                     minimax_running = False
+                    start_time = None
                 elif result_button_rect.collidepoint(event.pos):
                     path = bfs(grid, grid[0][0], goal)
                     block_count = len(path)
@@ -497,9 +500,11 @@ def main():
                     ga_running = False
                     astar_running = False
                     minimax_running = False
+                    start_time = None
                 elif toggle_footprints_button_rect.collidepoint(event.pos):
                     show_footprints = not show_footprints
                     minimax_running = False
+                    start_time = None
                 elif ga_button_rect.collidepoint(event.pos):
                     start_time = pygame.time.get_ticks()
                     ga_running = True
@@ -633,7 +638,7 @@ def main():
 
         pygame.display.flip()
 
-        if elapsed_time > timeout_threshold:
+        if elapsed_time > timeout_threshold and current!=goal:
             # if not show_button_rect:
                 print("Timeout!")
                 timeout_message(win)
@@ -656,12 +661,31 @@ def main():
             block_count = len(path)  
             score,category = calculate_score_fuzzy(extra_blocks_accessed_count, block_count, time_elapsed, level)
             score = round(score)
-            winning_message(win, score, category)
+            if sound_on:
+                pygame.mixer.music.stop()  # Stop the background music
+                win_sound.play()  # Play the winning sound
+            font = pygame.font.Font("fonts\Valorax-lg25V.otf", 64)
+            text = font.render("GOAL REACHED!!!", True, (0, 255, 0))
+            win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2, maze_y + HEIGHT // 2 - text.get_height() // 2))
+            text = font.render(f"Score: {score}/75 ({category})", True, (255, 255, 0))
+            win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2 + 50, maze_y + HEIGHT // 2 - text.get_height() // 2 + 50))
+            start_time = 0
+            pygame.display.update()
+            pygame.time.wait(6000)  # Wait for 3 seconds
+            win.fill(BLACK)
+            draw_grid(win, grid, show_footprints)  # Redraw the grid or background
+            pygame.display.update()
+
+            if sound_on:
+                win_sound.stop()  # Stop the winning sound
+                pygame.mixer.music.play(-1)  # Restart the background music
+            #winning_message(win, score, category)
             # score = calc_score.calculate_score(extra_blocks_accessed_count, len(shortest_path), time_elapsed, level)
             print(f'Block_count: {block_count}')
             print(f'Agent_block_count: {agent_block_count}')
             print(f'Score: {score} ({category})')
-            start_time = 0
+        
+            
             
 
     
@@ -673,9 +697,10 @@ def winning_message(win, score, category):
     text = font.render("GOAL REACHED!!!", True, (0, 255, 0))
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2, maze_y + HEIGHT // 2 - text.get_height() // 2))
     text = font.render(f"Score: {score}/75 ({category})", True, (255, 255, 0))
+    score_temp = score
     win.blit(text, (maze_x + WIDTH // 2 - text.get_width() // 2 + 50, maze_y + HEIGHT // 2 - text.get_height() // 2 + 50))
     pygame.display.update()
-    pygame.time.wait(3000)  # Wait for 3 seconds
+    pygame.time.wait(10000)  # Wait for 10 seconds
     if sound_on:
         win_sound.stop()  # Stop the winning sound
         pygame.mixer.music.play(-1)  # Restart the background music
