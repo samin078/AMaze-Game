@@ -39,7 +39,7 @@ where:
 - Determines performance levels based on blocks accessed and time elapsed.
 
 ## Contributors
-- **[Samin Saiara]** - A* Search, Alpha-Beta Pruning, Maze Creation
-- **[Sumiya Islam Barsha]** - Genetic Algorithm, Fuzzy Logic, Agent Handling
+- **[Samin Saiara]** - Genetic Algorithm, A* Search, Maze Creation
+- **[Sumiya Islam Barsha]** -  Alpha-Beta Pruning, Fuzzy Logic, Agent Handling
 
 
